@@ -1,0 +1,23 @@
+{
+    "name": "CodeName.Serialization",
+    "rootNamespace": "",
+    "references": [
+        "Exanite.Core",
+        "Newtonsoft.Json.UnityConverters",
+        "UniDi.UniDi",
+        "UniRx"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "JsonPatch.Net.dll",
+        "Newtonsoft.Json.dll",
+        "System.Text.Json.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
