@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.UnityConverters;
 
-namespace Project.Source.Serialization
+namespace CodeName.Serialization
 {
     public class ProjectJsonContractResolver : UnityTypeContractResolver
     {

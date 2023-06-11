@@ -7,7 +7,7 @@ using Newtonsoft.Json.UnityConverters.Math;
 using Newtonsoft.Json.UnityConverters.Scripting;
 using UniDi;
 
-namespace Project.Source.Serialization
+namespace CodeName.Serialization
 {
     public class JsonNetInstaller : ScriptableObjectInstaller
     {

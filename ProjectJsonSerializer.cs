@@ -5,7 +5,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Project.Source.Serialization
+namespace CodeName.Serialization
 {
     public class ProjectJsonSerializer : JsonSerializer
     {

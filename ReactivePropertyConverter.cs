@@ -4,7 +4,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using UniRx;
 
-namespace Project.Source.Serialization
+namespace CodeName.Serialization
 {
     public class ReactivePropertyConverter : JsonConverter
     {
