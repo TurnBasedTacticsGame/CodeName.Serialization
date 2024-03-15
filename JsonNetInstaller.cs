@@ -17,14 +17,17 @@ namespace CodeName.Serialization
         {
             BindConverters();
 
-            Container.Bind<IContractResolver>().To<ProjectJsonContractResolver>()
+            Container.Bind<IContractResolver>()
+                .To<ProjectJsonContractResolver>()
                 .AsSingle()
                 .CopyIntoAllSubContainers();
 
-            Container.Bind<JsonSerializerSettings>().FromMethod(CreateJsonSerializerSettings).AsSingle()
+            Container.Bind<JsonSerializerSettings>()
+                .FromMethod(CreateJsonSerializerSettings).AsSingle()
                 .CopyIntoAllSubContainers();
 
-            Container.BindInterfacesAndSelfTo<ProjectJsonSerializer>()
+            Container.Bind(typeof(ISerializer), typeof(ProjectJsonSerializer), typeof(JsonSerializer))
+                .To<ProjectJsonSerializer>()
                 .AsSingle()
                 .OnInstantiated<JsonSerializer>(ApplySerializerSettings)
                 .CopyIntoAllSubContainers();
