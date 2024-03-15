@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace CodeName.Serialization
 {
-    public class ProjectJsonSerializer : JsonSerializer
+    public class ProjectJsonSerializer : JsonSerializer, ISerializer
     {
         public string Serialize(object? value)
         {
