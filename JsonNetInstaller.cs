@@ -9,7 +9,7 @@ using UniDi;
 
 namespace CodeName.Serialization
 {
-    public class JsonNetInstaller : ScriptableObjectInstaller
+    public class JsonNetInstaller : MonoInstaller
     {
         private const string ApplySerializerSettingsMethodName = "ApplySerializerSettings";
 
