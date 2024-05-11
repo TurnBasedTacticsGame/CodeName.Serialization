@@ -24,7 +24,7 @@ namespace CodeName.Serialization
                 jsonProperty.Ignored = true;
             }
 
-            if (IsMemberTypeValidateSerializeByValue(memberInfo, out var memberType))
+            if (!jsonProperty.Ignored && IsMemberTypeValidateSerializeByValue(memberInfo, out var memberType))
             {
                 var isValidate = memberInfo.GetCustomAttribute<SerializeByValueAttribute>() != null;
                 if (!isValidate)
