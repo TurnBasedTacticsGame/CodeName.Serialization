@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CodeName.Serialization.Snapshotting;
+using CodeName.Serialization.Validation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.UnityConverters;
@@ -11,7 +11,7 @@ namespace CodeName.Serialization
 {
     public class CodeNameJsonContractResolver : UnityTypeContractResolver
     {
-        private Dictionary<Type, bool> isTypeSnapshottableCache = new();
+        private Dictionary<Type, bool> isTypeValidateSerializeByValue = new();
 
         protected override JsonProperty CreateProperty(MemberInfo memberInfo, MemberSerialization memberSerialization)
         {
@@ -24,33 +24,33 @@ namespace CodeName.Serialization
                 jsonProperty.Ignored = true;
             }
 
-            if (IsMemberTypeSnapshottable(memberInfo, out var memberType))
+            if (IsMemberTypeValidateSerializeByValue(memberInfo, out var memberType))
             {
-                var isSnapshot = memberInfo.GetCustomAttribute<SerializeSnapshotAttribute>() != null;
-                if (!isSnapshot)
+                var isValidate = memberInfo.GetCustomAttribute<SerializeByValueAttribute>() != null;
+                if (!isValidate)
                 {
-                    throw new SnapshotRequiredException(memberType, memberInfo);
+                    throw new SerializeByValueRequiredException(memberType, memberInfo);
                 }
             }
 
             return jsonProperty;
         }
 
-        private bool IsMemberTypeSnapshottable(MemberInfo memberInfo, out Type memberType)
+        private bool IsMemberTypeValidateSerializeByValue(MemberInfo memberInfo, out Type memberType)
         {
             memberType = null;
-            return (memberInfo is PropertyInfo propertyInfo && IsTypeSnapshottable(propertyInfo.PropertyType, out memberType))
-                || (memberInfo is FieldInfo fieldInfo && IsTypeSnapshottable(fieldInfo.FieldType, out memberType));
+            return (memberInfo is PropertyInfo propertyInfo && IsTypeValidateSerializeByValue(propertyInfo.PropertyType, out memberType))
+                || (memberInfo is FieldInfo fieldInfo && IsTypeValidateSerializeByValue(fieldInfo.FieldType, out memberType));
         }
 
-        private bool IsTypeSnapshottable(Type type, out Type narrowedType)
+        private bool IsTypeValidateSerializeByValue(Type type, out Type narrowedType)
         {
             var originalType = type;
             narrowedType = type;
 
-            if (isTypeSnapshottableCache.TryGetValue(narrowedType, out var isSnapshottable))
+            if (isTypeValidateSerializeByValue.TryGetValue(narrowedType, out var isValidate))
             {
-                return isSnapshottable;
+                return isValidate;
             }
 
             var enumerableInterface = narrowedType.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
@@ -59,10 +59,10 @@ namespace CodeName.Serialization
                 narrowedType = enumerableInterface.GetGenericArguments()[0];
             }
 
-            isSnapshottable = narrowedType.GetCustomAttribute<SnapshottableAttribute>() != null;
-            isTypeSnapshottableCache[originalType] = isSnapshottable;
+            isValidate = narrowedType.GetCustomAttribute<ValidateSerializeByValueAttribute>() != null;
+            isTypeValidateSerializeByValue[originalType] = isValidate;
 
-            return isSnapshottable;
+            return isValidate;
         }
     }
 }
