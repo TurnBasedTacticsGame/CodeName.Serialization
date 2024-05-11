@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using CodeName.Serialization.Snapshotting;
 using Newtonsoft.Json;
@@ -9,6 +11,8 @@ namespace CodeName.Serialization
 {
     public class CodeNameJsonContractResolver : UnityTypeContractResolver
     {
+        private Dictionary<Type, bool> isTypeSnapshottableCache = new();
+
         protected override JsonProperty CreateProperty(MemberInfo memberInfo, MemberSerialization memberSerialization)
         {
             var jsonProperty = base.CreateProperty(memberInfo, memberSerialization);
@@ -20,7 +24,7 @@ namespace CodeName.Serialization
                 jsonProperty.Ignored = true;
             }
 
-            if (IsSnapshottable(memberInfo, out var memberType))
+            if (IsMemberTypeSnapshottable(memberInfo, out var memberType))
             {
                 var isSnapshot = memberInfo.GetCustomAttribute<SerializeSnapshotAttribute>() != null;
                 if (!isSnapshot)
@@ -32,22 +36,33 @@ namespace CodeName.Serialization
             return jsonProperty;
         }
 
-        private bool IsSnapshottable(MemberInfo memberInfo, out Type memberType)
+        private bool IsMemberTypeSnapshottable(MemberInfo memberInfo, out Type memberType)
         {
-            if (memberInfo is PropertyInfo propertyInfo && propertyInfo.PropertyType.GetCustomAttribute<SnapshottableAttribute>() != null)
-            {
-                memberType = propertyInfo.PropertyType;
-                return true;
-            }
-
-            if (memberInfo is FieldInfo fieldInfo && fieldInfo.FieldType.GetCustomAttribute<SnapshottableAttribute>() != null)
-            {
-                memberType = fieldInfo.FieldType;
-                return true;
-            }
-
             memberType = null;
-            return false;
+            return (memberInfo is PropertyInfo propertyInfo && IsTypeSnapshottable(propertyInfo.PropertyType, out memberType))
+                || (memberInfo is FieldInfo fieldInfo && IsTypeSnapshottable(fieldInfo.FieldType, out memberType));
+        }
+
+        private bool IsTypeSnapshottable(Type type, out Type narrowedType)
+        {
+            var originalType = type;
+            narrowedType = type;
+
+            if (isTypeSnapshottableCache.TryGetValue(narrowedType, out var isSnapshottable))
+            {
+                return isSnapshottable;
+            }
+
+            var enumerableInterface = narrowedType.GetInterfaces().FirstOrDefault(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            if (enumerableInterface != null)
+            {
+                narrowedType = enumerableInterface.GetGenericArguments()[0];
+            }
+
+            isSnapshottable = narrowedType.GetCustomAttribute<SnapshottableAttribute>() != null;
+            isTypeSnapshottableCache[originalType] = isSnapshottable;
+
+            return isSnapshottable;
         }
     }
 }
