@@ -5,7 +5,7 @@ using Newtonsoft.Json.UnityConverters;
 
 namespace CodeName.Serialization
 {
-    public class ProjectJsonContractResolver : UnityTypeContractResolver
+    public class CodeNameJsonContractResolver : UnityTypeContractResolver
     {
         protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {

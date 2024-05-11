@@ -18,7 +18,7 @@ namespace CodeName.Serialization
             BindConverters();
 
             Container.Bind<IContractResolver>()
-                .To<ProjectJsonContractResolver>()
+                .To<CodeNameJsonContractResolver>()
                 .AsSingle()
                 .CopyIntoAllSubContainers();
 
@@ -26,8 +26,8 @@ namespace CodeName.Serialization
                 .FromMethod(CreateJsonSerializerSettings).AsSingle()
                 .CopyIntoAllSubContainers();
 
-            Container.Bind(typeof(ISerializer), typeof(ProjectJsonSerializer), typeof(JsonSerializer))
-                .To<ProjectJsonSerializer>()
+            Container.Bind(typeof(ISerializer), typeof(CodeNameJsonSerializer), typeof(JsonSerializer))
+                .To<CodeNameJsonSerializer>()
                 .AsSingle()
                 .OnInstantiated<JsonSerializer>(ApplySerializerSettings)
                 .CopyIntoAllSubContainers();
