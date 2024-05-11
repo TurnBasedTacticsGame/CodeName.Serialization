@@ -22,7 +22,7 @@ namespace CodeName.Serialization
 
             if (IsSnapshottable(memberInfo, out var memberType))
             {
-                var isSnapshot = memberInfo.GetCustomAttribute<SnapshotAttribute>() != null;
+                var isSnapshot = memberInfo.GetCustomAttribute<SerializeSnapshotAttribute>() != null;
                 if (!isSnapshot)
                 {
                     throw new SnapshotRequiredException(memberType, memberInfo);
